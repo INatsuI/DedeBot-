@@ -13,6 +13,11 @@ bot.on("guildMemberAdd", member => {
 
 })
     
+bot.on("guildMemberAdd", member => {
+    let role = member.guild.roles.find("name", "Membre")
+    member.addRole(role)
+})
+    
 bot.on("guildMemberRemove", member =>{
         member.guild.channels.find("name", "bienvenue").send(`A plus ${member.user.username} reviens quand tu veux`) 
 })
