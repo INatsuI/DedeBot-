@@ -8,14 +8,7 @@ bot.on('ready', function() {
     console.log("Go");
 
 bot.on("guildMemberAdd", member => {
-    var join_embed = new Discord.RichEmbed()
-        .setTitle("**Bienvenue :**")
-        .addBlankField()
-        .addField("Un nouvel utilisateur vient d'arriver !",`${member.user.username}`)
-        .addField("Besoin d'aide ?","Si tu a des questions tu peut les posé au membres du staff !")
-        .addField("Nombre d'utilisateurs sur le discord :", message.guild.memberCount)
-        .setColor('#F58800')
-    message.channels.find("name", "bienvenue").sendEmbed(join_embed);
+    member.guild.channels.find("name", "bienvenue").send(`Bienvenue ${member.user.username} sur le discord de Dédé !`) 
 
 
 })
