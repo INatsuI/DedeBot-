@@ -8,7 +8,7 @@ bot.on('ready', function() {
     console.log("Go");
 
 bot.on("guildMemberAdd", member => {
-    let role = member.guild.roles.find("name", "Utilisateur")
+    let role = member.guild.roles.find("name", "Membre")
     member.guild.channels.find("name", "bienvenue").send(`Bienvenue  @${member.user.username} sur le discord de Dédé !`)
     member.addRole(role)
 
