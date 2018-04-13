@@ -181,5 +181,14 @@ bot.on('message', message => {
             console.log("Commande Help demandé !");
 
     }
+    
+        if(message.content === prefix + 'renchannel'){
+        var interval = setInterval (function (){
+              message.guild.channels.find('id',"415580295476281344")
+              .setName("🔥 Annonces 🔥 👥 "+`${message.guild.members.filter(m => m.presence.status !== 'offline').size} / ${message.guild.memberCount}`+"");
+        }, 1000); // intervalle entre les envoi de packet
+        console.log("Commande Renchannel demandée !");
+            
+    }
 
 });
