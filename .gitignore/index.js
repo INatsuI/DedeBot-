@@ -23,7 +23,7 @@ bot.on("guildMemberRemove", member =>{
 
 });
 
-bot.login("NDMzMzY0ODIxNTcyOTc2NjUx.Da6x9w.BLW4FdQaWNocD_zCQn0Mi1MgCTk");
+bot.login(process.env.TOKEN);
 
 bot.on('message', message => {
     let command = message.content.split(" ")[0];
