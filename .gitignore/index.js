@@ -13,9 +13,8 @@ bot.on("guildMemberAdd", member => {
 })
     
 bot.on("guildMemberAdd", member => {
-    let role = member.guild.roles.find("name", "Membre");
+    let role = member.guild.roles.find("name", "Membre")
     member.addRole(role)
-
 })
     
 bot.on("guildMemberRemove", member =>{
