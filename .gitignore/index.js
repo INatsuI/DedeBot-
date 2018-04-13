@@ -8,14 +8,11 @@ bot.on('ready', function() {
     console.log("Go");
 
 bot.on("guildMemberAdd", member => {
-    member.guild.channels.find("name", "bienvenue").send(`Bienvenue  @${member.user.username} sur le discord de Dédé !`)
-})
-
-bot.on("guildMemberAdd", member => {
     let role = member.guild.roles.find("name", "Membre")
+    member.guild.channels.find("name", "bienvenue").send(`Bienvenue  @${member.user.username} sur le discord de Dédé !`)
     member.addRole(role)
+
 })
-    
     
 bot.on("guildMemberRemove", member =>{
         member.guild.channels.find("name", "bienvenue").send(`A plus ${member.user.username} reviens quand tu veux`) 
