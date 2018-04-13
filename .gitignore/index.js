@@ -15,7 +15,7 @@ bot.on("guildMemberAdd", member => {
         .addField("Besoin d'aide ?","Si tu a des questions tu peut les posé au membres du staff !")
         .addField("Nombre d'utilisateurs sur le discord :", message.guild.memberCount)
         .setColor('#F58800')
-    member.guild.channels.find("name", "bienvenue").send(join_embed);
+    member.guild.channels.find("name", "bienvenue").sendEmbed(join_embed);
 
 
 })
