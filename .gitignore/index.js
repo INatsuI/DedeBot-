@@ -144,9 +144,9 @@ bot.on('message', message => {
                 .setTitle("Information du discord")
                 .addBlankField()
                 .addField("Nom du discord : " , message.guild.name)
-                .addField("Crée le : " , message.guild.createdAt)
-                .addField("Tu nous a rejoin le : " , message.member.joinedAt)
-                .addField("Ce discord possèdent " , message.guild.memberCount + " Utilisateurs")
+                .addField("Créé le :  " , message.guild.createdAt)
+                .addField("Tu nous a rejoins le : " , message.member.joinedAt)
+                .addField("Ce discord possède :  " , message.guild.memberCount + " Utilisateurs")
                 .addBlankField()
                 .setColor("#F58800")
                 message.channel.sendEmbed(help_embed);
