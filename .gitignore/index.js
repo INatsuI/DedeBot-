@@ -14,7 +14,7 @@ bot.on("guildMemberAdd", member => {
 })
     
 bot.on("guildMemberAdd", member => {
-    let role = member.guild.roles.find("name", "Boss 👑")
+    let role = member.guild.roles.find("name", "Membre 💎")
     member.addRole(role)
 })
     
