@@ -1,194 +1,717 @@
 const Discord = require ('discord.js');
 const bot = new Discord.Client();
+const sf = require('snekfetch');
+const snek = require("snekfetch");
 
-var prefix = ("*")
+
+
+
+
+
+var prefix = ("C!")
+
+bot.on("guildMemberAdd", member => {
+    let role = member.guild.roles.find("name", "👀 - Membres")
+    member.addRole(role)
+
+});
+
+bot.on("guildMemberAdd", member => {
+    const embed = new Discord.RichEmbed()
+      .setColor('#77B5FE')
+      .setAuthor(member.user.tag, member.user.avatarURL)
+      .setTitle("Un nouvel utilisateur vient d'arriver", `Il s'agit de [${member.user.tag}](https://discordapp.com/)`, true)
+      .addField("Comment connaitre mon fonctionnement ? ", "Je t'invite a exécuter la command : " + prefix )
+      .addField(`Nombre de membres après l'arrivée de ${member.user.tag}`, member.guild.memberCount)
+      .setTimestamp()
+member.guild.channels.find("name", "bienvenue").send({embed})
+
+});
+
 
 bot.on('ready', function() {
-    bot.user.setGame("Surveille le discord de Dédé | *help ", 'https://www.twitch.tv/gotaga')
-    console.log("Go");
-
-bot.on("guildMemberAdd", member => {
-    member.guild.channels.find("name", "bienvenue").send(`Bienvenue ${member.user.username} sur le discord de Dédé !`) 
 
 
-})
-    
-bot.on("guildMemberAdd", member => {
-    let role = member.guild.roles.find("name", "Membre 💎")
-    member.addRole(role)
-})
-    
-bot.on("guildMemberRemove", member =>{
-        member.guild.channels.find("name", "bienvenue").send(`A plus ${member.user.username} reviens quand tu veux`) 
-})
-
+    var games = [
+        "Envie d'acheter des VBucks ?",
+        "Développé par Drilen !",
+        + (bot.users.size - 1) + " Membre(s) !"
+    ]
+    bot.user.setActivity(setInterval(function() {
+    bot.user.setGame(games[Math.floor(Math.random() * games.length)], 'https://www.twitch.tv/gotaga')
+    }, 3000))
 });
 
 bot.login(process.env.TOKEN);
 
-bot.on('message', message => {
+
+bot.on("message", function(message, song) {
+    if (message.author.equals(bot.user)) return;
+    
+    if (!message.content.startsWith(prefix)) return;
+    
+    var args = message.content.substring(prefix.length).split(" ");
+    
+    switch (args[0].toLowerCase()) {
+        case "clear":
+        if (message.member.hasPermission("MANAGE_MESSAGES")) {
+            message.channel.fetchMessages()
+               .then(function(list){
+                    message.channel.bulkDelete(list);
+                }, function(err){message.channel.send("Erreur")})}
+            break;
+
+            case "avatar":
+            if (!message.mentions.users.first()) {
+                var help_embed = new Discord.RichEmbed()
+                .setAuthor("❌ Mentionner quelqu'un  !")
+                .setColor("#850606")
+                message.channel.sendEmbed(help_embed);   
+            }
+            if (message.mentions.users.first()) {
+                let user = message.mentions.users.first() ? message.mentions.users.first() : message.author
+                let ava = user.displayAvatarURL
+                let embed = {
+                color:0x000000,
+                description:"Photo d'utilisateur de "+user.username+"",
+                image:{url:ava}
+                }
+            message.channel.send("", {embed})
+            break;
+            }
+            case "8ball":
+            let argsed = message.content.split(" ").slice(1);
+            let tte = argsed.join(" ")
+            if (!tte) {
+               var help_embed = new Discord.RichEmbed()
+               .setAuthor("❌ Merci de poser une question.  !")
+               .setColor("#850606")
+               message.channel.sendEmbed(help_embed);   
+           }
+           if (tte) {
+                         var replys8 = [
+                             '#F407FC', 
+                             '#034EEF',
+                             '#09F4D1',
+                             '#09F14E',
+                             '#E7EF07',
+                             '#F5A718',
+                             '#FB4B06',
+                             '#FB2702',
+                             '#F6F4F3',
+                             '#201F1F'
+                         ];
+                     
+                         let reponse8 = (replys8[Math.floor(Math.random() * replys8.length)])
+     
+                var replys = [
+                "Oui",
+                "Non",
+                "Je ne sais pas",
+                "Peut-être",
+                "Probablement",
+                "c vrai !",
+                "Wallah je sais pas"
+                ];
+            
+                let reponse = (replys[Math.floor(Math.random() * replys.length)])
+                var ballembed = new Discord.RichEmbed()
+                .setDescription(":8ball: 8ball")
+                .addField("Question", tte)
+                .addField("Réponse", reponse)
+                .setColor(reponse8)
+            message.channel.sendEmbed(ballembed)
+            break;
+            }
+            }
+            
+        }
+    
+        
+);
+
+
+bot.on("message", async function(message, result, reject) {
     let command = message.content.split(" ")[0];
     const args = message.content.slice(prefix.length).split(/ +/);
     command = args.shift().toLowerCase();
 
+    if (message.author.equals(bot.user)) return;
+ 
+    if (!message.content.startsWith(prefix)) return;
 
-    if(message.content.startsWith(prefix + "purgedédé")){
+
+    if(message.content.startsWith(prefix + "createrole") || message.content.startsWith(prefix + "cr")) {
+        let argson = message.content.split(" ").slice(1);
+        let namerole = argson.join(" ")
+        if(!message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR')) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'a pas la permission !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);             
+        }
+
         if(message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR'))
+                if(!namerole) {
+                    var help_embed = new Discord.RichEmbed()
+                    .setAuthor("❌ Erreur : ❌")
+                    .addField("CenterSécurité :", "Nivaeu 0")
+                    .addField("Erreur :", "Tu n'a pas mis le nom du role !")
+                    .setColor("#850606")
+                    message.channel.sendEmbed(help_embed); 
+            }
+            if(message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR'))
+                if(namerole) {
+                    message.guild.createRole({name: namerole,})
+                    var help_embed = new Discord.RichEmbed()
+                    .setAuthor("✔️ Succès :")
+                    .addField("Role :", `${namerole}`)
+                    .setColor("#800080")
+                    message.channel.sendEmbed(help_embed);  
+            }
+        }
+    
+    if(message.content.startsWith(prefix + "Candy")) {
+        var help_embed = new Discord.RichEmbed()
+        .setDescription("Tien un bonbon :D")
+        .setImage("http://33.media.tumblr.com/d6f19c25149fd69fc06e2a14276d349f/tumblr_n3k5ui8iWt1rveihgo1_500.gif")
+        .setColor("#850606")
+        message.channel.sendEmbed(help_embed);  
+
+    }
+
+    if(message.content.startsWith(prefix + "Bob")) {
+        message.channel.send({
+            files:[{
+              attachment: `http://triggered-api.tk/api/v2/bob?url=${message.author.displayAvatarURL}`,
+              name: `bob.gif`
+            }]
+            
+          }).catch(err => { if(err) return message.channel.send("**:x: Une erreur s'est produite**") }) 
+
+    }
+
+    if(message.content.startsWith(prefix + "Blood")) {
+        message.channel.send({
+            files:[{
+              attachment: `http://triggered-api.tk/api/v2/blood?url=${message.author.displayAvatarURL}`,
+              name: `blood.gif`
+            }]
+            
+          }).catch(err => { if(err) return message.channel.send("**:x: Une erreur s'est produite**") }) 
+
+    }
+
+    if(message.content.startsWith(prefix + "Beautiful")) {
+        message.channel.send({
+            files:[{
+              attachment: `http://triggered-api.tk/api/v2/beautiful?url=${message.author.displayAvatarURL}`,
+              name: `beautiful.gif`
+            }]
+            
+          }).catch(err => { if(err) return message.channel.send("**:x: Une erreur s'est produite**") }) 
+
+    }
+
+    if(message.content.startsWith(prefix + "Wasted")) {
+        message.channel.send({
+            files:[{
+              attachment: `http://triggered-api.tk/api/v2/wasted?url=${message.author.displayAvatarURL}`,
+              name: `wasted.gif`
+            }]
+            
+          }).catch(err => { if(err) return message.channel.send("**:x: Une erreur s'est produite**") }) 
+
+    }
+
+    if(message.content.startsWith(prefix + "Tobecontinued")) {
+        message.channel.send({
+            files:[{
+              attachment: `http://triggered-api.tk/api/v2/tobecontinued?url=${message.author.displayAvatarURL}`,
+              name: `tobecontinued.gif`
+            }]
+            
+          }).catch(err => { if(err) return message.channel.send("**:x: Une erreur s'est produite**") }) 
+
+    }
+
+    if(message.content.startsWith(prefix + "Convmatrix")) {
+        message.channel.send({
+            files:[{
+              attachment: `http://triggered-api.tk/api/v2/convmatrix?url=${message.author.displayAvatarURL}`,
+              name: `convmatrix.gif`
+            }]
+            
+          }).catch(err => { if(err) return message.channel.send("**:x: Une erreur s'est produite**") }) 
+
+    }
+
+    if(message.content.startsWith(prefix + "Invert")) {
+        message.channel.send({
+            files:[{
+              attachment: `http://triggered-api.tk/api/v2/invert?url=${message.author.displayAvatarURL}`,
+              name: `invert.gif`
+            }]
+            
+          }).catch(err => { if(err) return message.channel.send("**:x: Une erreur s'est produite**") }) 
+
+    }
+
+    if(message.content.startsWith(prefix + "Illuminati")) {
+        message.channel.send({
+            files:[{
+              attachment: `http://triggered-api.tk/api/v2/illuminati?url=${message.author.displayAvatarURL}`,
+              name: `illuminati.gif`
+            }]
+            
+          }).catch(err => { if(err) return message.channel.send("**:x: Une erreur s'est produite**") }) 
+
+    }
+
+    if(message.content.startsWith(prefix + "Triggered")) {
+        message.channel.send({
+            files:[{
+              attachment: `http://triggered-api.tk/api/v2/triggered?url=${message.author.displayAvatarURL}`,
+              name: `triggered.gif`
+            }]
+            
+          }).catch(err => { if(err) return message.channel.send("**:x: Une erreur s'est produite**") }) 
+
+    }
+
+
+    if(message.content.startsWith(prefix + "4k")) {
+        const nsfw = message.guild.channels.find(m => m.name === "nsfw");
+        if (!nsfw) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'est pas dans un salon NSFW !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);              
+        }
+        if(nsfw) {
+            var replys = [
+                "http://www.wallsexy.net/wp-content/uploads/2016/09/fonds-ecran-images-sexy-photoshop-de-femmes-nues-04-660x330.jpg",
+                "http://www.wallsexy.net/wp-content/uploads/2017/01/fonds-ecran-images-sexy-blonde-bombasse-porno-16-660x330.jpg",
+                "http://www.wallsexy.net/wp-content/uploads/2016/10/fonds-ecran-images-sexy-chikita-nue-et-sexy-94-660x330.jpg",
+                "http://www.wallsexy.net/wp-content/uploads/2016/03/amy-se-masturbe-avec-un-vibrateur-18-660x330.jpg",
+                "http://www.wallsexy.net/wp-content/uploads/2016/02/blonde-pulpeuse-se-caresse-la-chatte-15-660x330.jpg",
+                "http://www.wallsexy.net/wp-content/uploads/2017/12/fonds-ecran-images-sexy-belles-salopes-brune-03-660x330.jpg",
+                "http://www.wallsexy.net/wp-content/uploads/2016/12/fonds-ecran-images-sexy-brunette-bombasse-sexy-14-660x330.jpg",
+                "http://www.wallsexy.net/wp-content/uploads/2016/03/aspen-se-masturbe-le-cul-et-la-chatte-15-660x330.jpg",
+                "http://www.wallsexy.net/wp-content/uploads/2017/02/fonds-ecran-images-sexy-etudiantes-brunette-nues-03-660x330.jpg",
+                "http://www.wallsexy.net/wp-content/uploads/2017/01/fonds-ecran-images-sexy-etudiante-qui-prefere-baiser-13-660x330.jpg"
+            ];
+            let reponse = (replys[Math.floor(Math.random() * replys.length)])
+            var embed = new Discord.RichEmbed()
+            .setColor('#800080')
+            .setImage(reponse)
+         nsfw.send({embed})
+        }
+    }
+  
+
+    if(message.content.startsWith(prefix + "Ass")) {
+        const nsfw = message.guild.channels.find(m => m.name === "nsfw");
+        if (!nsfw) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'est pas dans un salon NSFW !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);              
+        }
+        if(nsfw) {
+            var replys = [
+                    "http://www.wallsexy.net/wp-content/uploads/2017/01/fonds-ecran-images-sexy-gros-seins-de-jolies-bombasses-09-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2017/01/fonds-ecran-images-sexy-blonde-bombasse-porno-16-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/12/fonds-ecran-images-sexy-2-mecs-pour-la-bombasse-01-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/12/fonds-ecran-images-sexy-2-bombasses-blanche-pour-un-black-12-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/12/fonds-ecran-images-sexy-brunette-bombasse-sexy-14-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2018/01/fonds-ecran-images-sexy-une-bouteille-dans-le-cul-07-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2017/12/fonds-ecran-images-sexy-deux-penis-dans-le-cul-09-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2017/02/fonds-ecran-images-sexy-simony-diamond-se-fait-enculer-13-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/11/fonds-ecran-images-sexy-Jolie-cul-de-femmes-noires-02-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/11/fonds-ecran-images-sexy-femmes-mature-avec-un-jolie-cul-14-660x330.jpg"
+                ];
+                let reponse = (replys[Math.floor(Math.random() * replys.length)])
+                var embed = new Discord.RichEmbed()
+                .setColor('#800080')
+                .setImage(reponse)
+             nsfw.send({embed})
+            }
+        }
+
+    if(message.content.startsWith(prefix + "boobs")) {
+        const nsfw = message.guild.channels.find(m => m.name === "nsfw");
+        if (!nsfw) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'est pas dans un salon NSFW !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);              
+        }
+        if(nsfw) {
+            var replys = [
+                    "http://www.wallsexy.net/wp-content/uploads/2017/02/fonds-ecran-images-sexy-photoshop-de-gros-seins-06b-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2017/01/fonds-ecran-images-sexy-gros-seins-de-jolies-bombasses-09-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/12/fonds-ecran-images-sexy-gros-seins-jeune-femme-12-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/11/fonds-ecran-images-sexy-gros-seins-de-salope-noire-20-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/08/fonds-ecran-images-sexy-gros-seins-femme-sexy-08-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/08/fonds-ecran-images-sexy-jeunette-avec-des-seins-parfais-14-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/08/fonds-ecran-images-sexy-seins-de-jolies-rousses-14-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/05/fonds-ecran-images-sexy-petits-seins-amateurs-19-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/02/anette-dawn-et-ses-jolies-seins-10-660x330.jpg",
+                    "http://www.wallsexy.net/wp-content/uploads/2016/02/jolie-femme-et-gros-seins-09-660x330.jpg"
+                ];
+                let reponse = (replys[Math.floor(Math.random() * replys.length)])
+                var embed = new Discord.RichEmbed()
+                .setColor('#800080')
+                .setImage(reponse)
+             nsfw.send({embed})
+            }
+        }
+    
+
+    if(message.content.startsWith(prefix + "Fuck")) {
+        const nsfw = message.guild.channels.find(m => m.name === "nsfw");
+        if (!nsfw) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'est pas dans un salon NSFW !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);              
+        }
+        if(nsfw) {
+            var replys = [
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2017/10/gifs-anim%C3%A9s-levrette.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/gif-de-levrette.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2017/10/gif-levrette.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2017/10/position-du-kamasutra-levrette.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2017/10/kamasutra-la-levrette.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/kamasutra-la-levrette.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/levrette-debout.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/levrette-exterieur.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2017/10/levrette-%C3%A0-plusieurs.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2017/10/gif-anim%C3%A9-levrette-en-couple.gif"
+                ];
+                let reponse = (replys[Math.floor(Math.random() * replys.length)])
+                var embed = new Discord.RichEmbed()
+                .setColor('#800080')
+                .setImage(reponse)
+             nsfw.send({embed})
+            }
+        }
+
+    if(message.content.startsWith(prefix + "Suck")) {
+        const nsfw = message.guild.channels.find(m => m.name === "nsfw");
+        if (!nsfw) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'est pas dans un salon NSFW !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);              
+        }
+        if(nsfw) {
+            var replys = [
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/gif-fellation.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/gif-anime-fellation.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/gif-ejac-faciale.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/gif-fellation-69.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/animation-fellation.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/fellation-plaisir.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/fellation-pleine-nature.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/fellation-pipe.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/faire-une-fellation.gif",
+                    "https://www.rencontresanslendemain.net/wp-content/uploads/2018/01/gif-de-fellation.gif"
+                ];
+                let reponse = (replys[Math.floor(Math.random() * replys.length)])
+                var embed = new Discord.RichEmbed()
+                .setColor('#800080')
+                .setImage(reponse)
+             nsfw.send({embed})
+            }
+        }
+
+
+
+    if(message.content.startsWith(prefix + "Hentai")) {
+        const nsfw = message.guild.channels.find(m => m.name === "nsfw");
+        if (!nsfw) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'est pas dans un salon NSFW !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);              
+        }
+        if(nsfw) {
+                var replys = [
+                    "https://images.sex.com/images/pinporn/2018/04/11/300/19353548.gif",
+                    "https://images.sex.com/images/pinporn/2018/04/02/300/19317076.gif",
+                    "https://images.sex.com/images/pinporn/2018/04/05/300/19329798.gif",
+                    "https://images.sex.com/images/pinporn/2018/03/18/300/19257302.gif",
+                    "https://images.sex.com/images/pinporn/2018/03/17/300/19257050.gif",
+                    "https://images.sex.com/images/pinporn/2018/04/05/300/19329924.gif",
+                    "https://images.sex.com/images/pinporn/2018/04/06/300/19335137.gif",
+                    "https://images.sex.com/images/pinporn/2018/03/13/300/19240110.gif",
+                    "https://images.sex.com/images/pinporn/2018/03/17/300/19254702.gif",
+                    "https://images.sex.com/images/pinporn/2018/03/12/300/19236921.gif"
+                ];
+                let reponse = (replys[Math.floor(Math.random() * replys.length)])
+                var embed = new Discord.RichEmbed()
+                .setColor('#800080')
+                .setImage(reponse)
+             nsfw.send({embed})
+            }
+        }
+
+        if(message.content.startsWith(prefix + "chat")) {
+            var replys = [
+                "https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/126407/pexels-photo-126407.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/326875/pexels-photo-326875.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/315582/pexels-photo-315582.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/774731/pexels-photo-774731.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/33537/cat-animal-cat-portrait-mackerel.jpg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/22346/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/115011/cat-face-close-view-115011.jpeg?auto=compress&cs=tinysrgb&h=350"
+            ];
+            let reponse = (replys[Math.floor(Math.random() * replys.length)])
+            var embed = new Discord.RichEmbed()
+            .setColor('#800080')
+            .setImage(reponse)
+        message.channel.send(embed)
+    }
+
+        if(message.content.startsWith(prefix + "dog")) {
+            var replys = [
+                "https://images.pexels.com/photos/356378/pexels-photo-356378.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/460823/pexels-photo-460823.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/59523/pexels-photo-59523.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/374906/pexels-photo-374906.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/33053/dog-young-dog-small-dog-maltese.jpg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/159541/wildlife-photography-pet-photography-dog-animal-159541.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/257540/pexels-photo-257540.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/89775/dog-hovawart-black-pet-89775.jpeg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/9080/night-garden-yellow-animal.jpg?auto=compress&cs=tinysrgb&h=350",
+                "https://images.pexels.com/photos/733416/pexels-photo-733416.jpeg?auto=compress&cs=tinysrgb&h=350"
+            ];
+            let reponse = (replys[Math.floor(Math.random() * replys.length)])
+            var embed = new Discord.RichEmbed()
+            .setColor('#800080')
+            .setImage(reponse)
+          message.channel.send({embed})
+    }
+
+        if (message.content.startsWith(prefix + "Aide") || message.content.startsWith(prefix + "aide")){
+            message.react("📩")
+            var help_embed = new Discord.RichEmbed()
+                .setColor('#800080')
+                .setAuthor(message.author.username, message.author.avatarURL)
+                .setDescription("🔨 Commandes du bot Center (En Dév)")
+                .addField("⛔ Modérateur", "```- C!ban\n- C!kick\n- C!clear\n- C!unban (En dév)\n- C!mute (En dév)\n- C!unmute (En Dév)\n- C!warn (En dév) ```")
+                .addField("🔥 Général", "```- C!Support\n- C!invite  ```")
+                .addField(":gear: Gestion du serveur", "```- C!createrole  ```")
+                .addField("🎉 Fun", "```- C!avatar\n- C!ping\n- C!chat \n- C!Dog\n- C!Invert\n- C!Convmatrix\n- C!Tobecontinued\n- C!Wasted\n- C!Beautiful\n- C!Blood\n- C!Bob\n- C!Triggered\n- C!Illuminati\n- C!Candy```")
+                .addField("🎵 Musique", "```- C!play (Lien Youtube) (En Dév)\n- C!skip (En Dév)\n- C!stop (En Dév) ```")
+                .addField("💦 NSFW", "```- C!boobs\n- C!4k\n- C!Ass\n- C!Fuck\n- C!Suck\n- C!Kiss ```")
+                .setTimestamp()
+                message.author.sendEmbed(help_embed); 
+        }
+
+    if(message.content === prefix + "mute"){
+        let Perm = message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR');
+        let Membermute = message.guild.member(message.mentions.users.first());
+
+        if(!Perm) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'a pas la permission !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);            
+        }
+
+        if(Perm)
+            if(!Membermute){
+                var help_embed = new Discord.RichEmbed()
+                .setAuthor("❌ Erreur : ❌")
+                .addField("CenterSécurité :", "Nivaeu 0")
+                .addField("Erreur :", "Tu doit mentionner quelqu'un !")
+                .setColor("#850606")
+                message.channel.sendEmbed(help_embed);    
+            }
+        if(Perm)
+            if(Membermute) {
+                message.guild.Membermute.overwritePermissions(Membermute, { SEND_MESSAGES: false }).then(Membermute => {
+                    var help_embed = new Discord.RichEmbed()
+                    .addField("Commande :", "Mute")
+                    .addField("Utilisateur :", member.displayName)
+                    .addField("Modérateur :", message.member)
+                    .setColor("#800080")
+                    .setTimestamp()
+                    message.channel.sendEmbed(help_embed);            
+                })
+            }
+
         
-        message.channel.bulkDelete(99).then(() =>{
-            message.channel.send(``).then(msg => msg.delete(99))
-        });
-
-        var help_embed = new Discord.RichEmbed()
-        .setColor('#F58800')
-        .setTitle("**Information :**                         ")
-        .addBlankField()
-        .addField("Commande :", "Purge                               ")
-        .addField("Exécuteur : ", "" + message.member + "              ")
-        .addBlankField()
-        message.channel.sendEmbed(help_embed);
     }
 
-
-    if (message.content === prefix + 'help'){
-        message.reply ('Regarde tes messages privée !');
-        var help_embed = new Discord.RichEmbed()
-            .setTitle("**Informations DédéBot :**")
-            .addBlankField()
-            .addField("**__Commandes d'administrateur / Modérateur (Encore en dév) :__**", "\n...")
-            .addField(prefix + "ban ","Permet de ban des utilisateur.")
-            .addField(prefix + "kick", "Permet de kick des utilisateur.")
-            .addField(prefix + "mute", "Permet de mute un utilisateur - Soon")
-            .addField(prefix + "warn", "Permet de mettre un avertisement à un utilisateur - Soon")
-            .addField(prefix + "sondage ", "Permet de faire un sondage entre 2 choses.")
-            .addBlankField()
-            .addField("**__Commandes Fun / Informations / Tous : __**", "...")
-            .addField(prefix + "DiscordInfo","Permet d'avoir des infos sur le Discord !")
-            .addField(prefix + "Youtube","Permet d'avoir la chaine Youtube de Dédé !")
-            .addField(prefix + "Twitter","Permet d'avoir le Twitter de Dédé !")
-            .addField(prefix + "Musique","Permet d'avoir des infos sur les commandes de musique ! - Soon")
-            .setColor('#F58800')
-        message.author.sendEmbed(help_embed); 
-        console.log("Commande Help demandé !");
-    
-    }
-
-    if (message.content === prefix + 'Youtube'){
-        var help_embed = new Discord.RichEmbed()
-            .setColor('#F58800')
-            .setTitle("**Informations Youtube :**")
-            .addBlankField()
-            .addField("**Chaine Youtube de Dédé : Dédé**", '\n**Lien de la chaine : ** https://www.youtube.com/channel/UCgLgmuJspcPYwaXpTUdQZ_g')
-            .addBlankField()
+    if(message.content === prefix + "ping"){
+        const then = Date.now();
+            var help_embed = new Discord.RichEmbed()
+            .addField("Ping :", `${bot.ping}`)
+            .setColor("#800080")
+            .setTimestamp()
             message.channel.sendEmbed(help_embed);
-
-    
     }
 
-    if (message.content === prefix + 'Twitter'){
-        var help_embed = new Discord.RichEmbed()
-            .setColor('#F58800')
-            .setTitle("**Informations Twitter :**")
-            .addBlankField()
-            .addField("**Twitter de Dédé : @Dede1erHD**", '\n**Lien du twitter de Dédé : ** https://twitter.com/Dede1erHD')
-            .addBlankField()
-            message.channel.sendEmbed(help_embed);
-    
-    }
+
+
 
 
     if(message.content.startsWith(prefix + "kick")) {
-        if(message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR'))
-        var member= message.mentions.members.first();
-        if(!member) {
-            return message.reply("Utilisateur introuvable / Impossible a expulser / Aucun Utilisateur a été détecté !").catch(console.error);
+        let Perm = message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR');
+        var member = message.mentions.members.first();           
+
+        if(!Perm) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'a pas la permission !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);
         }
-        // Kick
+        if(Perm)
+            if(!member) {
+                var help_embed = new Discord.RichEmbed()
+                .setAuthor("❌ Erreur : ❌")
+                .addField("CenterSécurité :", "Nivaeu 0")
+                .addField("Erreur :", "Utilisateur non mentionner !")
+                .setColor("#850606")
+                message.channel.sendEmbed(help_embed);
+        }
+
+
+        if(Perm) 
+            if(member) {
+
+
         member.kick().then((member) => {
             var help_embed = new Discord.RichEmbed()
-            .setColor('#F58800')
-            .setTitle("**Informations Kick :**")
-            .addBlankField()
-            .addField("**Utilisateur kick :**",  "" + member.displayName + "" )
-            .addField("**Exécuteur :**", "" + message.member + "" )
-            .addBlankField()
+            .addField("Commande :", "Kick")
+            .addField("Utilisateur :", member.displayName)
+            .addField("Modérateur :", message.member)
+            .setColor("#800080")
+            .setAuthor(message.author.username, message.author.avatarURL)
+            .setTimestamp()
             message.channel.sendEmbed(help_embed);
+        
         }).catch(() => {
-        })
+        }
+        )
+    }
     }
 
     if(message.content.startsWith(prefix + "ban")) {
-        if(message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR'))
-        var member= message.mentions.members.first();
-        if(!member) {
-            return message.reply("Utilisateur introuvable / Impossible a expulser / Aucun Utilisateur a été détecté !").catch(console.error);
+        let Perm = message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR');
+        var member = message.mentions.members.first();           
+
+        if(!Perm) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'a pas la permission !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);
         }
-        // Ban
+        if(Perm)
+            if(!member) {
+                var help_embed = new Discord.RichEmbed()
+                .setAuthor("❌ Erreur : ❌")
+                .addField("CenterSécurité :", "Nivaeu 0")
+                .addField("Erreur :", "Utilisateur non mentionner !")
+                .setColor("#850606")
+                message.channel.sendEmbed(help_embed);
+        }
+
+
+        if(Perm) 
+            if(member) {
+
+
         member.ban().then((member) => {
-        // Successmessage
-        var help_embed = new Discord.RichEmbed()
-        .setColor('#F58800')
-        .setTitle("**Informations Bannisement :**")
-        .addBlankField()
-        .addField("**Utilisateur banni :**",  "" + member.displayName + "" )
-        .addField("**Exécuteur :**", "" + message.member + "" )
-        .addBlankField()
-        message.channel.sendEmbed(help_embed);
+            var help_embed = new Discord.RichEmbed()
+            .addField("Commande :", "ban")
+            .addField("Utilisateur :", member.displayName)
+            .addField("Modérateur :", message.member)
+            .setColor("#800080")
+            .setAuthor(message.author.username, message.author.avatarURL)
+            .setTimestamp()
+            message.channel.sendEmbed(help_embed);
+        
         }).catch(() => {
-
-        })
-    }
-
-        if(message.content === prefix + "Discordinfo"){
-            var help_embed = new Discord.RichEmbed()
-                .setTitle("Information du discord")
-                .addBlankField()
-                .addField("Nom du discord : " , message.guild.name)
-                .addField("Créé le :  " , message.guild.createdAt)
-                .addField("Tu nous a rejoins le : " , message.member.joinedAt)
-                .addField("Ce discord possède :  " , message.guild.memberCount + " Utilisateurs")
-                .addBlankField()
-                .setColor("#F58800")
-                message.channel.sendEmbed(help_embed);
-
         }
-
-        if (message.content === prefix + 'Musique'){
-            var help_embed = new Discord.RichEmbed()
-                .setColor('#F58800')
-                .setTitle("**Commandes Musique: (En Dév)**")
-                .addBlankField()
-                .addField("*Play <Lien Youtube>", "Permet d'écouter la bande son d'une vidéo Youtube !")
-                .addField("*Skip ", "Permet de mettre la musique suivant dans la fille d'attente !")
-                .addField("*stop ", "Permet d’arrêter la musique ")
-                .addBlankField()
-                message.channel.sendEmbed(help_embed);
-        
-        }
-
-        
-        if (message.content === prefix + 'Build'){
-            message.reply ('Tu vien de recevoir le formulaire avec tout les conditions !');
-            message.delete()
-            var help_embed = new Discord.RichEmbed()
-                .setTitle("**Informations commande Build :**")
-                .addBlankField()
-                .addField("**OBLIGATIONS :**", "Tu dois copier et remplir le formulaire qui ta été donné !\nTu dois envoyer le formulaire  à Dédé et tu pourras attendre une réponse !\nIl est interdit de spammer Dédé !\nPour tout type de question veuillez mp Dédé !\nTout abus sera sanctioné")
-                .addBlankField()
-                .addField("**Formulaire :**", "```- Théme : \n- Taille : \n- Budget : \n- Terraforming : \n- Build Suplémentaire (ex : Dragon , Phénix , ...): \n- Informations Suplémentaires :```")
-                .setColor('#F58800')
-            message.author.sendEmbed(help_embed); 
-            console.log("Commande Help demandé !");
-
-    }
+    )
     
-        if(message.content === prefix + 'renchannel'){
-        var interval = setInterval (function (){
-              message.guild.channels.find('id',"416298251512315935")
-              .setName("🔥 Annonces 🔥 👥 "+`${message.guild.members.filter(m => m.presence.status !== 'offline').size} / ${message.guild.memberCount}`+"");
-        }, 1000); // intervalle entre les envoi de packet
-        console.log("Commande Renchannel demandée !");
-            
+
+} 
+
+if(message.content.startsWith(prefix + "giverole") || message.content.startsWith(prefix + "gr")) {
+    message.delete(message.author)
+    let membergiverole = message.mentions.members.first()
+    if(!membergiverole){
+        var help_embed = new Discord.RichEmbed()
+        .setAuthor("❌ Erreur : ❌")
+        .addField("CenterSécurité :", "Nivaeu 0")
+        .addField("Erreur :", "Tu a mentionner personne !")
+        .setColor("#850606")
+        message.channel.sendEmbed(help_embed);                
+    }
+    let namerole = message.mentions.roles.first();
+    if(!namerole) {
+        var help_embed = new Discord.RichEmbed()
+        .setAuthor("❌ Erreur : ❌")
+        .addField("CenterSécurité :", "Nivaeu 0")
+        .addField("Erreur :", "Veuillez mettre un role a give !")
+        .setColor("#850606")
+        message.channel.sendEmbed(help_embed);    
+    }
+        if(!message.member.hasPermission("MANAGE_ROLES")) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'a pas la permission !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);                    
+        }
+        if(!message.guild.member(message.author.id).hasPermission("MANAGE_ROLES")) {
+            var help_embed = new Discord.RichEmbed()
+            .setAuthor("❌ Erreur : ❌")
+            .addField("CenterSécurité :", "Nivaeu 0")
+            .addField("Erreur :", "Tu n'a pas la permission !")
+            .setColor("#850606")
+            message.channel.sendEmbed(help_embed);    
+        }
+        if(message.guild.member(message.author.id).hasPermission("MANAGE_ROLES")) {
+            if(namerole) {
+                membergiverole.addRole(namerole)
+                var help_embed = new Discord.RichEmbed()
+                .setAuthor("✔️ Succès :")
+                .addField("Role :", `${namerole}`)
+                .addField("Donné à :", `${membergiverole}`)
+                .setColor("#800080")
+                message.channel.sendEmbed(help_embed);  
+            }
     }
 
-});
+}}});
