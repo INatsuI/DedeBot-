@@ -24,7 +24,7 @@ bot.on("guildMemberAdd", member => {
       .addField("Comment connaitre mon fonctionnement ? ", "Je t'invite a exécuter la command : " + prefix )
       .addField(`Nombre de membres après l'arrivée de ${member.user.tag}`, member.guild.memberCount)
       .setTimestamp()
-member.guild.channels.find("name", "bienvenue").send({embed})
+member.guild.channels.find("name", "🔔bienvenue🔔").send({embed})
 
 });
 
