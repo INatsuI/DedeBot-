@@ -623,7 +623,7 @@ bot.on("message", async function(message, result, reject) {
     }
 
     if(message.content.startsWith(prefix + "ban")) {
-        let Perm = message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR');
+        let Perm = message.guild.members.get(message.author.id).permissions.has('MANAGE_MESSAGES');
         var member = message.mentions.members.first();           
 
         if(!Perm) {
