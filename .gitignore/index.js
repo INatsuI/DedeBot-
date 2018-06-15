@@ -5,15 +5,13 @@ const bot = new Discord.Client();
 
 var prefix = ("R!");
 
-var autorole = ("💧 - Membre(s)");
-
 
 var servers = {};
 
 
 bot.on("guildMemberAdd", member =>{
     if(!member.guild.roles.find('name', role)) return console.log("Role inconnu");
-    member.addRole(member.guild.roles.find('name', autorole));
+    member.addRole(member.guild.roles.find('name', "💧 - Membre(s)"));
 })
 
 bot.on('ready', function() {
