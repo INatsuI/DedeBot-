@@ -9,9 +9,9 @@ var prefix = ("R!");
 var servers = {};
 
 
-bot.on("guildMemberAdd", member =>{
-    if(!member.guild.roles.find('name', role)) return console.log("Role inconnu");
-    member.addRole(member.guild.roles.find('name', "💧 - Membre(s)"));
+bot.on("guildMemberAdd", member => {
+    let role = member.guild.roles.find("name", "💧 - Membre(s)")
+    member.addRole(role)
 })
 
 bot.on('ready', function() {
