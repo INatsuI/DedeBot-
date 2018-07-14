@@ -1,24 +1,25 @@
 const Discord = require('discord.js');
 
 const bot = new Discord.Client({disableEveryone: true});
-var prefix = ("P!");
+var prefix = ("R!");
 
 bot.on('ready', () => {
-    bot.user.setGame("🔥 • Prominance", 'https://www.twitch.tv/bot')
+    bot.user.setGame("• Infrastrucutre : ❌", 'https://www.twitch.tv/bot')
     console.log("Bot Go !");
 });
 
 bot.on("guildMemberAdd", member => {
-    let role = member.guild.roles.find("name", "👀 • Membre(s)")
+    member.guild.channels.find("name", "『🌟』bienvenues").send(`🗽 Bienvenue a toi, __${member.user.username}__ je t'invite a lire le règlement.`)
+    bot.user.setGame("• Infrastrucutre : ❌", "https://www.twitch.tv/Méliodas")
+    let role = member.guild.roles.find("name", "👒 | mєmвrєs")
     member.addRole(role)
 })
 
-bot.on("guildMemberAdd", member => {
-    bot.user.setGame("🔥 • Prominance", "https://www.twitch.tv/Méliodas")
+bot.on("guildMemberRemove", member => {
+    member.guild.channels.find("name", "『✨』départ").send(`⭕ __${member.user.username}__, Vient de nous quitter.`)
+    bot.user.setGame("• Infrastrucutre : ❌", "https://www.twitch.tv/Méliodas")
 
 })
-
-
 
 bot.login(process.env.TOKEN);
 
@@ -29,8 +30,8 @@ bot.on('message', message => {
         message.reply("📩 Tu viens de recevoir l'aide en message privé.");
         message.react("📩")
         var help_embed = new Discord.RichEmbed()
-            .setColor('#ED7F10')
-            .setDescription("🔥 •  La Prominance | Shop")
+            .setColor('#77B5FE')
+            .setDescription("Support Rs.rip")
             .addField("⛔ Modérateur", "``` • Ban \n • Kick```")
             .addField("🎉 Fun", "``` - Aucun pour le moment.```")
             .addField("💦 NSFW", "```- Aucun pour le moment.```")
@@ -69,7 +70,7 @@ bot.on('message', message => {
             .addField("• Commande :", "Kick")
             .addField("• Utilisateur :", member.displayName)
             .addField("• Modérateur :", message.member)
-            .setColor("#ED7F10")
+            .setColor("#77B5FE")
             .setAuthor(message.author.username, message.author.avatarURL)
             .setTimestamp()
             message.channel.sendEmbed(help_embed);
@@ -110,7 +111,7 @@ bot.on('message', message => {
             .addField("• Commande :", "ban")
             .addField("• Utilisateur :", member.displayName)
             .addField("• Modérateur :", message.member)
-            .setColor("#ED7F10")
+            .setColor("#77B5FE")
             .setAuthor(message.author.username, message.author.avatarURL)
             .setTimestamp()
             message.channel.sendEmbed(help_embed);
