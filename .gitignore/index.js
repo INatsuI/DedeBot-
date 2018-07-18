@@ -1,44 +1,44 @@
 const Discord = require('discord.js');
 
 const bot = new Discord.Client({disableEveryone: true});
-var prefix = ("R!");
+var prefix = ("A!");
 
 bot.on('ready', () => {
-    bot.user.setGame("• Infrastrucutre : ❌", 'https://www.twitch.tv/bot')
+    bot.user.setGame("🍭 | αtsurσσt | Joue les H4X0R", 'https://www.twitch.tv/AtsuRoot')
     console.log("Bot Go !");
 });
 
 bot.on("guildMemberAdd", member => {
-    member.guild.channels.find("name", "『🌟』bienvenues").send(`🗽 Bienvenue a toi, __${member.user.username}__ je t'invite a lire le règlement.`)
-    bot.user.setGame("• Infrastrucutre : ❌", "https://www.twitch.tv/Méliodas")
-    let role = member.guild.roles.find("name", "👒 | mєmвrєs")
+    member.guild.channels.find("name", "『👣』вιєиνєиυєѕ").send(`:loudspeaker: Bienvenue a toi, __${member.user.username}__ sur mon serveur. :D`)
+    bot.user.setGame("🍭 | αtsurσσt | Joue les H4X0R", "https://www.twitch.tv/Méliodas")
+    let role = member.guild.roles.find("name", "━━━━━━━━━━━━━━━━")
+    let role2 = member.guild.roles.find("name", "━━━━━━━━━━━━━━━━━")
+    let role3 = member.guild.roles.find("name", "━━━━━━━━━━━━━━")
+    let role4 = member.guild.roles.find("name", "━━━━━━━━━━━━━")
+    let role5 = member.guild.roles.find("name", "━━━━━━━━━━━━━━━━━━")
+    let role6 = member.guild.roles.find("name", "『❌』")
     member.addRole(role)
+    member.addRole(role2)
+    member.addRole(role3)
+    member.addRole(role4)
+    member.addRole(role5)
+    member.addRole(role6)
+
+
 })
 
 bot.on("guildMemberRemove", member => {
-    member.guild.channels.find("name", "『✨』départ").send(`⭕ __${member.user.username}__, Vient de nous quitter.`)
-    bot.user.setGame("• Infrastrucutre : ❌", "https://www.twitch.tv/Méliodas")
+    member.guild.channels.find("name", "『🎌』∂éραят").send(`:loudspeaker: Bye, __${member.user.username}__, Bonne continuation.`)
+    bot.user.setGame("🍭 | αtsurσσt | Joue les H4X0R", "https://www.twitch.tv/Méliodas")
 
 })
 
-bot.login(process.env.TOKEN);
+bot.login(process.env.token);
 
 
 bot.on('message', message => {
 
-    if(message.content.startsWith(prefix + "Aide")) {
-        message.reply("📩 Tu viens de recevoir l'aide en message privé.");
-        message.react("📩")
-        var help_embed = new Discord.RichEmbed()
-            .setColor('#77B5FE')
-            .setDescription("Support Rs.rip")
-            .addField("⛔ Modérateur", "``` • Ban \n • Kick```")
-            .addField("🎉 Fun", "``` - Aucun pour le moment.```")
-            .addField("💦 NSFW", "```- Aucun pour le moment.```")
-            message.author.sendEmbed(help_embed); 
-    
 
-    }
 
     if(message.content.startsWith(prefix + "kick")) {
         let Perm = message.guild.members.get(message.author.id).permissions.has('ADMINISTRATOR');
